@@ -22,21 +22,46 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+#
+# This is a template package file for Spack.  We've put "FIXME"
+# next to all the things you'll want to change. Once you've handled
+# them, you can save this file and test your package like this:
+#
+#     spack install libatomic_ops
+#
+# You can edit this file again by typing:
+#
+#     spack edit libatomic_ops
+#
+# See the Spack documentation for more information on packaging.
+# If you submit this package back to Spack as a pull request,
+# please first remove this boilerplate and all FIXME comments.
+#
 from spack import *
+from spack.build_environment import SPACK_NO_PARALLEL_MAKE
 
 
 class LibatomicOps(Package):
     """This package provides semi-portable access to hardware-provided
     atomic memory update operations on a number architectures."""
 
+    # FIXME: Add a proper url for your package's homepage here.
     homepage = "https://github.com/ivmai/libatomic_ops"
-    url      = "http://www.hboehm.info/gc/gc_source/libatomic_ops-7.4.4.tar.gz"
+    url      = "https://github.com/ivmai/libatomic_ops/archive/libatomic_ops-7_4_4.tar.gz"
 
-    version('7.4.4', '426d804baae12c372967a6d183e25af2')
+    version('7_4_4', 'd29b8c951d32ca9f0be56a84ddd84689')
 
     def install(self, spec, prefix):
+        # Bootstrap with autotools
+        bash = which('bash')
+
+        bash('./autogen.sh')
+        bash('./autogen.sh')  # yes, twice, intentionally
+
+        # Configure, compile & install
         configure('--prefix={0}'.format(prefix),
                   '--enable-shared')
 
         make()
         make('install')
+

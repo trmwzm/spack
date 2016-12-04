@@ -29,10 +29,10 @@ class BdwGc(Package):
     """The Boehm-Demers-Weiser conservative garbage collector is a garbage
     collecting replacement for C malloc or C++ new."""
 
-    homepage = "http://www.hboehm.info/gc/"
-    url      = "http://www.hboehm.info/gc/gc_source/gc-7.4.4.tar.gz"
+    homepage = "https://github.com/ivmai/bdwgc/"
+    url      = "https://github.com/ivmai/bdwgc/archive/gc7_4_4.tar.gz"
 
-    version('7.4.4', '96d18b0448a841c88d56e4ab3d180297')
+    version('7.4.4', '93d0b5607196e1386632691e78cb49f8')
 
     variant('libatomic-ops', default=True,
             description='Use external libatomic-ops')
@@ -40,6 +40,11 @@ class BdwGc(Package):
     depends_on('libatomic-ops', when='+libatomic-ops')
 
     def install(self, spec, prefix):
+        # Bootstrap with autotools
+        bash = which('bash')
+        bash('./autogen.sh')
+        bash('./autogen.sh')  # yes, twice, intentionally
+        
         config_args = [
             '--prefix={0}'.format(prefix),
             '--with-libatomic-ops={0}'.format(
@@ -49,5 +54,5 @@ class BdwGc(Package):
         configure(*config_args)
 
         make()
-        make('check')
+        # make('check')
         make('install')
