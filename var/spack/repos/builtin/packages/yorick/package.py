@@ -24,6 +24,8 @@
 ##############################################################################
 from spack import *
 import os
+import shutil
+import glob
 
 
 class Yorick(AutotoolsPackage):
@@ -36,9 +38,9 @@ class Yorick(AutotoolsPackage):
     most operating systems (*nix systems, MacOS X, Windows). """
 
     homepage = "http://dhmunro.github.io/yorick-doc/"
-    url = "https://github.com/dhmunro/yorick/archive/y_2_2_04.tar.gz"
+    url = "http://github.com/dhmunro/yorick/tarball/2679aa117fcd4895dd32c8071523ffd5bd4cf3af"
 
-    version('2.2.04', md5='f46ba063992d496114db6c0a8df0f9c4')
+    version('2.2.04', md5='1b5b0da6ad81b2d9dba64d991ec17939')
     version('master', branch='master',
             git='https://github.com/dhmunro/yorick.git')
 
@@ -59,3 +61,13 @@ class Yorick(AutotoolsPackage):
         make()
         make("install")
 
+        try:
+            os.makedirs(prefix)
+        except OSError:
+            pass
+        os.chdir("relocate")
+        for f in glob.glob('*'):
+            if os.path.isdir(f):
+                shutil.copytree(f, os.path.join(prefix, f))
+            else:
+                shutil.copy2(f, os.path.join(prefix, f))
